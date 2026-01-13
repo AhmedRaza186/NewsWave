@@ -1,107 +1,123 @@
-let hero = document.getElementById("hero")
-let newsGrid = document.getElementById("newsGrid")
-let breaking = document.querySelector(".breaking")
-let searchInput = document.querySelector(".navbar input")
-let navLinks = document.querySelectorAll("nav a")
 
-let menuBtn = document.getElementById("menuBtn")
-let mobileNav = document.getElementById("mobileNav")
+const hero = document.getElementById("hero");
+const newsGrid = document.getElementById("newsGrid");
+const breaking = document.querySelector(".breaking");
+const searchInput = document.querySelector(".navbar input");
+const searchBtn = document.querySelector(".searchBtn");
+const navLinks = document.querySelectorAll("nav a");
+const sidebarItems = document.querySelectorAll(".sidebar li");
+
+const menuBtn = document.getElementById("menuBtn");
+const mobileNav = document.getElementById("mobileNav");
+
+
+
+fetchNews();
 
 menuBtn.addEventListener("click", () => {
-  mobileNav.classList.toggle("active")
-})
+    mobileNav.classList.toggle("active");
+});
 
 
-let showLoader = () => {
-  newsGrid.innerHTML = "<p>Loading news...</p>"
+function showLoader() {
+    newsGrid.innerHTML = "<p>Loading news...</p>";
 }
 
-// Fetch News
+
 async function fetchNews(category = "general", query = "") {
-  showLoader()
+    showLoader();
 
-  let url = `https://newsapi.org/v2/top-headlines?country=us&category=${category}&language=en&apiKey=825d44e0945846ca9b17cf4ca4e8132f`
 
-  if (query) {
-    url = `https://newsapi.org/v2/everything?q=${query}&language=en&sortBy=publishedAt&apiKey=825d44e0945846ca9b17cf4ca4e8132f`
-  }
+    let api = query
+        ? `https://gnews.io/api/v4/search?q=${query}&lang=en&max=10&apikey=54bea61f4267cabd6a2fc55e70fc69c8`
+        : `https://gnews.io/api/v4/top-headlines?country=us&topic=${category}&lang=en&max=10&apikey=54bea61f4267cabd6a2fc55e70fc69c8`;
 
-  try {
-    let res = await fetch(url)
-    let data = await res.json()
+    try {
+        const res = await fetch(api);
+        const data = await res.json();
 
-    if (data.status !== "ok") throw new Error("API Error")
+        if (!data.articles) throw new Error("Failed to fetch news");
 
-    renderHero(data.articles[0])
-    renderBreaking(data.articles[1])
-    renderNews(data.articles.slice(1, 10))
+        renderHero(data.articles[0]);
+        renderBreaking(data.articles[1]);
+        renderNews(data.articles.slice(1, 10));
 
-  } catch (err) {
-    newsGrid.innerHTML = "<p>⚠️ Failed to load news</p>"
-    console.error(err);
-  }
+        highlightActive(category);
+
+    } catch (err) {
+        newsGrid.innerHTML = "<p>⚠️ Failed to load news</p>";
+        console.error(err);
+    }
 }
 
 
 function renderHero(article) {
-  if (!article) return
+    if (!article) return;
 
-  hero.innerHTML = `
-    <img src="${article.urlToImage}" placeholder="${article.title}">
+    hero.innerHTML = `
+    <img src="${article.image || 'https://via.placeholder.com/800'}" alt="${article.title}">
     <div class="hero-text">
       <h1>${article.title}</h1>
-      <p>${article.description || ""}</p>
+      <p>${article.description || ''}</p>
     </div>
-  `
+  `;
 }
 
 
 function renderBreaking(article) {
-  if (!article) return
-  breaking.textContent = `🔴 Breaking: ${article.title}`
+    if (!article) return;
+    breaking.textContent = `🔴 Breaking: ${article.title}`;
+}
+
+function renderNews(articles) {
+    newsGrid.innerHTML = "";
+
+    articles.forEach(article => {
+        const card = document.createElement("article");
+        card.className = "card";
+        card.innerHTML = `
+      <img src="${article.image || 'https://via.placeholder.com/400'}" alt="${article.title}">
+      <h3>${article.title}</h3>
+      <p>${article.description || ''}</p>
+    `;
+        card.onclick = () => window.open(article.url, "_blank");
+        newsGrid.appendChild(card);
+    });
 }
 
 
-function renderNews(articles) {
-  newsGrid.innerHTML = ""
-
-  articles.forEach(article => {
-    let card = document.createElement("article")
-    card.className = "card"
-
-    card.innerHTML = `
-         <img src="${article.urlToImage}" placeholder="${article.title}">
-      <h3>${article.title}</h3>
-      <p>${article.description || ""}</p>
-    `
-
-    card.onclick = () => window.open(article.url, "_blank")
-    newsGrid.appendChild(card)
-  })
+function highlightActive(category) {
+    [...navLinks, ...sidebarItems].forEach(el => {
+        el.classList.toggle("active", el.dataset.category === category);
+    });
 }
 
 navLinks.forEach(link => {
-  link.addEventListener("click", e => {
-    e.preventDefault()
-    let category = link.dataset.category
-    fetchNews(category)
-  })
-})
-let sidebarItems = document.querySelectorAll(".sidebar li")
+    link.addEventListener("click", e => {
+        e.preventDefault();
+        const category = link.dataset.category;
+        fetchNews(category);
+    });
+});
 
 sidebarItems.forEach(item => {
-  item.addEventListener("click", () => {
-    fetchNews(item.dataset.category)
-  })
-})
-
+    item.addEventListener("click", () => {
+        fetchNews(item.dataset.category);
+    });
+});
 
 
 searchInput.addEventListener("keyup", e => {
-  if (e.key === "Enter") {
-    fetchNews("", searchInput.value)
-  }
-})
+    if (e.key === "Enter") {
+        const query = searchInput.value.trim();
+        if (query) fetchNews("", query);
+    }
+});
+
+searchBtn.addEventListener("click", () => {
+    const query = searchInput.value.trim();
+    if (query) fetchNews("", query);
+});
 
 
-fetchNews()
+
