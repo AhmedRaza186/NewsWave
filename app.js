@@ -3,7 +3,7 @@ const hero = document.getElementById("hero");
 const newsGrid = document.getElementById("newsGrid");
 const breaking = document.querySelector(".breaking");
 const searchInput = document.querySelector(".navbar input");
-const searchBtn = document.querySelector(".searchBtn");
+const searchBtn = document.querySelector("#searchBtn");
 const navLinks = document.querySelectorAll("nav a");
 const sidebarItems = document.querySelectorAll(".sidebar li");
 
@@ -29,8 +29,8 @@ async function fetchNews(category = "general", query = "") {
 
 
     let api = query
-        ? `https://gnews.io/api/v4/search?q=${query}&lang=en&max=10&apikey=54bea61f4267cabd6a2fc55e70fc69c8`
-        : `https://gnews.io/api/v4/top-headlines?country=us&topic=${category}&lang=en&max=10&apikey=54bea61f4267cabd6a2fc55e70fc69c8`;
+        ? `https://cors-anywhere.herokuapp.com/https://gnews.io/api/v4/search?q=${query}&lang=en&max=10&apikey=54bea61f4267cabd6a2fc55e70fc69c8`
+        : `https://cors-anywhere.herokuapp.com/https://gnews.io/api/v4/top-headlines?country=us&topic=${category}&lang=en&max=10&apikey=54bea61f4267cabd6a2fc55e70fc69c8`;
 
     try {
         const res = await fetch(api);
