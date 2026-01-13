@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>NewsWave</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<header class="navbar">
+  <div class="logo">NewsWave</div>
+<nav id="mobileNav">
+  <a href="#" data-category="general">Home</a>
+  <a href="#" data-category="world">World</a>
+  <a href="#" data-category="business">Business</a>
+  <a href="#" data-category="technology">Tech</a>
+  <a href="#" data-category="sports">Sports</a>
+</nav>
+<div class="search-box">
+  <input type="text" placeholder="Search news..." />
+  <button id="searchBtn">Search</button>
+</div>
+<button class="menu-btn" id="menuBtn">☰</button>
+
+</header>
+
+<div class="breaking">
+  🔴 Breaking: Market hits new high as tech stocks rally
+</div>
+
+<main class="layout">
+  
+<section class="hero" id="hero"></section>
+<section class="news-grid" id="newsGrid"></section>
+
+<aside class="sidebar">
+  <h2>Categories</h2>
+  <ul>
+    <li data-category="general">Top</li>
+    <li data-category="business">Business</li>
+    <li data-category="technology">Technology</li>
+    <li data-category="sports">Sports</li>
+    <li data-category="health">Health</li>
+  </ul>
+</aside>
+
+</main>
+
+<footer class="footer">
+  <p>© 2026 NewsWave — All Rights Reserved</p>
+</footer>
+
+<script src="app.js"></script>
+</body>
+</html>
